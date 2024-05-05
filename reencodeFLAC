@@ -32,5 +32,5 @@ done
 
 # This is decent for now, but it is slowly killing my SSD, since it decodes the FLAC
 # to an uncompressed PCM (.wav), and thereafter encodes the PCM to FLAC again.
-# A better solution is to use libflac directly and save the PCM in memory, not to the SSD.
+# A better solution is to use libflac directly and save the PCM in main memory, not to the SSD.
 # This way, fewer bytes are written to the SSD, and its lifespan is reduced slightly.
