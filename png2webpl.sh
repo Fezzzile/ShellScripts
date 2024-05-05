@@ -28,6 +28,9 @@ convert "$png" -define webp:lossless=true "$webp" && echo -n "Losslessly convert
 # I have to read more documentation, but this will do for now.
 echo "($(echo "100 * (1 - $(du -b "$webp"|cut -d "	" -f 1) / $(du -b "$png"|cut -d "	" -f 1))"|bc -l|cut -d "." -f1)% smaller)"
 
+# Copy modification and access times
+touch --reference="$png" "$webp"
+
 # Follow the psedocode below to check if the generated WebP is truly lossless.
 # ffmpeg -i [PNG file] fromPNG.ppm
 # ffmpeg -i [WebP file] fromWebP.ppm
