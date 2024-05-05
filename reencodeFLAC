@@ -1,0 +1,31 @@
+#! /usr/bin/sh
+#
+# This script removes album art, which I don't embed in FLAC files,
+# unless the FLAC is a single release.
+#
+# For albums, I prefer to have a cover art file, "cover.jpg/png",
+# in the same directory with all the songs.
+# This saves space, since I prefer the highest resolution of a cover art;
+# I generally download them from Ben Dodson's iTunes Artwork Finder
+# (https://bendodson.com/projects/itunes-artwork-finder/).
+#
+# The "uncompressed" version is exactly what the label/distributor uploaded 
+# to iTunes and/or Apple Music, with all metadata still intact. Nice!
+# Some of these files are 16-bit PNGs and TIFFs, taking over 20 MiB.
+#
+# But another reason for the script is to "fix" FLAC files which were encoded
+# by crappy encoders, some of which do not store MD5 checksums of the RAW audio.
+# The `flac` command, which uses `libflac`, does the job perfectly.
+#
+# Issues:
+# `metaflac`, the metadata handler, does not support importing multi-line tags, such as lyrics,
+# from a file; such tags have to be imported from standard input (stdin).
+
+for song in *flac
+do
+	metaflac "$song" --export-tags-to="$song"".tags"
+	flac -d --preserve-modtime "$song" && flac --preserve-modtime -f --best *wav && rm *wav && metaflac "$song" --import-tags-from="$song"".tags" && rm "$song"".tags"
+
+done
+
+# (c) Fezile Nkuna
