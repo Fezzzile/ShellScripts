@@ -18,4 +18,4 @@ do
 done
 
 # Delete empty directories
-rmdir *
+rmdir */
