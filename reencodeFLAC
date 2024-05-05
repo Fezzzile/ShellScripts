@@ -11,10 +11,13 @@
 #
 # The "uncompressed" version is exactly what the label/distributor uploaded 
 # to iTunes and/or Apple Music, with all metadata still intact. Nice!
-# Some of these files are 16-bit PNGs and TIFFs, taking over 20 MiB.
+# Some of these files are 16-bit PNGs and TIFFs, taking over 30 MiB.
+# When I finally get that 300-inch 8K screen (just kidding) I don't want to
+# see any compression artifacts and colour banding. (Actually, I'm not kidding.)
 #
 # But another reason for the script is to "fix" FLAC files which were encoded
 # by crappy encoders, some of which do not store MD5 checksums of the RAW audio.
+# I also want to use the highest compression setting.
 # The `flac` command, which uses `libflac`, does the job perfectly.
 #
 # Issues:
@@ -25,7 +28,9 @@ for song in *flac
 do
 	metaflac "$song" --export-tags-to="$song"".tags"
 	flac -d --preserve-modtime "$song" && flac --preserve-modtime -f --best *wav && rm *wav && metaflac "$song" --import-tags-from="$song"".tags" && rm "$song"".tags"
-
 done
 
-# (c) Fezile Nkuna
+# This is decent for now, but it is slowly killing my SSD, since it decodes the FLAC
+# to an uncompressed PCM (.wav), and thereafter encodes the PCM to FLAC again.
+# A better solution is to use libflac directly and save the PCM in memory, not to the SSD.
+# This way, fewer bytes are written to the SSD, and its lifespan is reduced slightly.
