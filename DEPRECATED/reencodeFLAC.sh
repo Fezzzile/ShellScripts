@@ -1,5 +1,18 @@
 #! /usr/bin/sh
 #
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# This script is deprecated.
+# Re-encoding FLAC to FLAC with reference FLAC encoder (`flac -f audio.flac`)
+# addresses the issues outlined below.
+#
+# From the man in Debian GNU/Linux:
+# "flac can also re-encode FLAC files.  
+# In other words, you can specify a FLAC or Ogg FLAC file as an input to the encoder
+# and it will decoder it and re-encode it according to the options you specify.  
+# It will also preserve all the metadata unless you override it with other options
+#  (e.g.  specifying new tags, seekpoints, cuesheet, padding, etc.)."
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
 # This script removes album art, which I don't embed in FLAC files,
 # unless the FLAC is a single release.
 #
