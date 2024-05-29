@@ -35,13 +35,11 @@ do
 					# all the other extensions will be echoed here ("'*JPG' does not... Skipping...")
 			then
 				echo \'"$media"\' does not seem to have EXIF metadata. Skipping...
-				# mv "$media" nometadata. I don't remember writing this line.
 			fi
 			continue # Without this line, pictures with no EXIF metadata will be overwritten, that is, deleted.
 		fi
 
-		mv "$media" "$new_name"
-		echo Renamed \'$media\' as "$new_name"
+		mv -v "$media" "$new_name"
 	fi
 
 done 2>/dev/null # Ignore "Error: File not found - *[file extension]" output 
