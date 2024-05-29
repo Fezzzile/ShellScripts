@@ -5,9 +5,9 @@
 # The script is helpful when one wants to organise thousands of EXIF-tagged photos
 
 # Say My_lovely_cat.jpg was taken on 13 May 2012 (at 13:47:02)
-# Its new name will be IMG_20120513_134702.jpg, which likely is its orginal name.
+# Its new name will be 20120513_134702.jpg, which likely is its orginal name.
 # Pictures named in this format are easier to organise. 
-# One can thereafter easily move all pictures taken in 2012 to a directory named 2012/, with the command "mv IMG_2012* 2012/"
+# One can thereafter easily move all pictures taken in 2012 to a directory named 2012/, with the command "mv 2012* 2012/"
 
 #TODO
 #If name exists, check if md5sum checksum is the same. If it is, replace; else append number.
