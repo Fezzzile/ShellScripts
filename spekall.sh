@@ -5,7 +5,7 @@ numberOfFilesToBeChecked=0
 
 for audiofile in *
 do
-	file -b "$audiofile"|egrep -i "audio|mp4|mpeg|flac|wav|m4a|aac|aiff|media|matroska|3gp|opus|wmv|ape|dts|wavpack|vorbis|ogg" > /dev/null
+	file -b "$audiofile"|egrep -i "audio|mp4|mpeg|flac|wav|m4a|aac|aiff|media|matroska|3gp|opus|wmv|ape|dts|wavpack|vorbis|ogg|ac3" > /dev/null
 	isAudio=$?
 	if [ $isAudio -eq 0 ]
 	then
