@@ -1,38 +1,44 @@
-#! /usr/bin/sh 
+#! /usr/bin/env bash
 
 numberOfCheckedFiles=1
 numberOfFilesToBeChecked=0
-
-for audiofile in *
-do
-	file -b "$audiofile"|egrep -i "audio|mp4|mpeg|flac|wav|m4a|aac|aiff|media|matroska|3gp|opus|wmv|ape|dts|wavpack|vorbis|ogg|ac3" > /dev/null
-	isAudio=$?
-	if [ $isAudio -eq 0 ]
-	then
-		numberOfFilesToBeChecked=$((numberOfFilesToBeChecked + 1))
-	fi
-done
-
-if [ $numberOfFilesToBeChecked -eq 0 ]
-then
-	echo "There are no files with audio streams in this directory"
-	exit 1 
-fi
+declare -a FilesWithSound # array
+index=0
 
 for audiofile in *
 do
 	# "audio" should cover roughly all files 
-	file -b "$audiofile"|egrep -i "audio|mp4|mpeg|flac|wav|m4a|aac|aiff|media|matroska|3gp|opus|wmv" > /dev/null 
-	 
+	file -b ./"$audiofile"|egrep -i "audio|mp4|mpeg|flac|wav|m4a|aac|aiff|media|matroska|3gp|opus|wmv|ape|dts|wavpack|vorbis|ogg|ac3" > /dev/null
+	
+	# ffmpeg, which Spek uses, can handle almost any file with an audio stream
+	# and is the better tool for this job.
+	# But its ffprobe tool is slow, which disappointed me because I turned to it
+	# since I wanted a binary tool, not a script (I'm talking about you, ExifTool), for speed.
+	#
+	# For some reason ffprobe outputs to stderr; redirect to stdout, to pipe to grep.
+	# ffprobe -hide_banner ./"$audiofile" 2> /dev/stdout|grep -i "audio" &> /dev/null
+	
 	# Get the return status of the last command.
 	# If it's non-zero, indicating that the expression was not matched in the search, skip the file.
 	isAudio=$?
 	if [ $isAudio -eq 0 ]
 	then
-		echo "$numberOfCheckedFiles/$numberOfFilesToBeChecked. spek '$audiofile'"
-		spek "$audiofile" 2> /dev/null # OPTIONAL AND NOT RECOMMENDED: Append an ampersand (&) hereto to perform all checks concurrently 
-		numberOfCheckedFiles=$((numberOfCheckedFiles + 1))
+		numberOfFilesToBeChecked=$((numberOfFilesToBeChecked + 1))
+		FilesWithSound[index]="$audiofile"
+		index=$((index + 1))
 	fi
 done
 
-#echo "\nDONE!"
+if [ $numberOfFilesToBeChecked -eq 0 ]
+then
+	echo "There are no files with audio streams in this directory."
+	exit 1 
+fi
+
+# Invoke Spek
+for filename in "${FilesWithSound[@]}"
+do
+	echo "$numberOfCheckedFiles/$numberOfFilesToBeChecked. spek '$filename'"
+	spek ./"$filename" 2> /dev/null # OPTIONAL AND NOT RECOMMENDED: Append an ampersand (&) hereto to perform all checks concurrently 
+	numberOfCheckedFiles=$((numberOfCheckedFiles + 1))
+done
