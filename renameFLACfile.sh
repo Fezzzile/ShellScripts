@@ -8,8 +8,8 @@ do
 	# The AWK command substitues / (ASCII: 0x2f) with ⧸ (UTF8: 0xe2a7b0).
 	title=$(metaflac --show-tag=title "$song"|cut -d "=" -f2|awk '{gsub("/", "⧸"); print}')
 	
-	tracknumber=$(metaflac --export-tags-to=- "$song"|egrep -i "track=|tracknumber="|cut -d "=" -f2)
-	tracktotal=$(metaflac --export-tags-to=- "$song"|egrep -i "tracktotal|totaltracks="|cut -d "=" -f2)
+	tracknumber=$(metaflac --export-tags-to=- "$song"|grep -Ei "track=|tracknumber="|cut -d "=" -f2)
+	tracktotal=$(metaflac --export-tags-to=- "$song"|grep -Ei "tracktotal|totaltracks="|cut -d "=" -f2)
 	
 	# Do not hide the file if the tracknumber tag does not exist (". Hello.flac").
 	if [ -z $tracknumber ]
@@ -25,7 +25,10 @@ do
 		fi
 	fi
 	
-	# The prepended zeroes ensure filenames song titles start from the same "column".
+	# The prepended zeroes ensure that the song titles after the tracknumber
+	# start from the same "column",
+	# unless, of couse, it's an album with a hundred+ songs,
+	# which almost never occurs.
 	if [ "$tracktotal" -gt 9 -a "$tracknumber" -lt 10 ]
 		then
 			newfilename="0""$tracknumber"". ""$title"".flac"	
