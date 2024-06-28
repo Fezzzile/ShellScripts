@@ -1,8 +1,10 @@
-#! /usr/bin/zsh
+#! /usr/bin/env sh
 
 for song in *flac
 do
-	# File systems in UNIX-like systems disallow the forward slash (/), as do DOS-like systems the colon (:) and other characters.
+	# File systems in UNIX-like systems disallow the forward slash (/),
+	# as do DOS-like systems the colon (:) and other characters.
+	
 	# The AWK command substitues / (ASCII: 0x2f) with ⧸ (UTF8: 0xe2a7b0).
 	title=$(metaflac --show-tag=title "$song"|cut -d "=" -f2|awk '{gsub("/", "⧸"); print}')
 	
@@ -23,6 +25,7 @@ do
 		fi
 	fi
 	
+	# The prepended zeroes ensure filenames song titles start from the same "column".
 	if [ "$tracktotal" -gt 9 -a "$tracknumber" -lt 10 ]
 		then
 			newfilename="0""$tracknumber"". ""$title"".flac"	
