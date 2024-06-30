@@ -4,20 +4,21 @@
 #
 # Note: If `--losless_jpeg=1` is passed to cjxl
 # but the input file is not a JPEG, possibly a PNG mislabeled as a JPEG in the extension (the Twitter/X Android app does this),
-# the file will be encoded,
+# the file will be encoded nonetheless,
 # and a warning will be sent to stderr.
 #
 # What is frustrating is the fact that the process will end with exit code 0.
 # Now try reconstructing the "JPEG",
-# The warning "Warning: could not decode losslessly to JPEG." is sent to stderr.
+# "Warning: could not decode losslessly to JPEG." is sent to stderr.
 # Again, with exit code 0.
+# I think this should be an error, not a warning.
 #
 # And when I convert the original JPEG and the JXL to PPM,
 # and compare the checksums of the PPMs, the checksums mismatch,
-# confirming that the file was converted lossily.
+# confirming that the file was not converted losslessly.
 #
 # A possible solution is to confirm that the input file is indeed a JPEG
-# with ExifTool before compressing (this scripture does not do that, yet).
+# with ExifTool/file before compressing (this scripture does not do that, yet).
 #
 # Perhaps I should write my own encoder and use libjxl directly!
 
@@ -38,4 +39,4 @@ cjxl --quiet --lossless_jpeg=1 "$jpg" "$jxl" && echo -n "Losslessly compressed '
 echo "($(echo "100 * (1 - $(du -b "$jxl"|cut -d "	" -f 1) / $(du -b "$jpg"|cut -d "	" -f 1))"|bc -l|cut -d "." -f1)% smaller)"
 
 # Copy access and modification times from the JPEG
-touch --reference="$jpg" "$jxl"
+touch -r "$jpg" "$jxl"
