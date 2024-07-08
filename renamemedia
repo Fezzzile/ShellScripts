@@ -45,7 +45,7 @@ then
 		exit
 	fi
 
-	# Not the same file, calculate MD5 checksums.
+	# Not the same file; calculate MD5 checksums.
 	mdnew=`md5sum $new_name".$extension"|cut -d " " -f 1`
 	mdold=`md5sum $media|cut -d " " -f 1`
 
@@ -53,7 +53,7 @@ then
 	if test $mdnew = $mdold 
 	then
 		echo "'$media' and '$new_name.$extension' are identical. Deleting one copy."
-		mv -v "$media" "$new_name".$extension 2> /dev/null # Ignore the "same file" warning.
+		mv -v "$media" "$new_name".$extension
 	else
 		# Different MD5 checksums; append number.
 		appended_num=1
