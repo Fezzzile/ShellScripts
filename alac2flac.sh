@@ -4,7 +4,7 @@
 
 # This script assumes the ALAC files are in one directory and, therefore, takes no arguments.
 
-# It is the user's duty to confirm that the M4A contains an ALAC file, not AAC.
+# It is the user's duty to confirm that the M4A file contains an ALAC, not AAC, stream.
 # In most cases, lossy-to-lossless compression is not ideal.
 
 for track in *m4a
