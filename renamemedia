@@ -1,0 +1,92 @@
+#! /usr/bin/bash
+
+# This script renames media (any format supported by ExifTool) with EXIF metadata.
+
+# Say 'My lovely cat.jpg' was taken on 13 May 2012 (at 13:47:02)
+# Its new name will be 20120513_134702.jpg, which likely is its orginal name.
+# Pictures named in this format are easier to organise.
+# One can thereafter easily move all pictures taken in 2012 to a directory named 2012/, with the command "mv 2012* 2012/"
+
+
+# TODO: Create function that checks if the files with the same filename
+#	also have the same inode.
+#
+#	Create function that checks if MD5 checksums are the same
+#	overwrite if they are and exit.
+
+media=$1
+
+# Dependencies: ExifTool.
+which exiftool &> /dev/null
+if test $? -ne 0
+then
+	echo "ExifTool not installed." > /dev/stderr
+	exit 1
+fi
+
+# "Create Date" should cover most files. 
+# Some systems, however, only store the "Date/Time Original" field.
+date_and_time=$(exiftool -d "%Y%m%d_%H%M%S" "$media"|egrep -i "Create Date|Date/Time Original"|head -n1|cut -d ":" -f2|cut -d " " -f2)
+
+extension=`exiftool "$media"|grep -i "File Type Extension"|cut -d ":" -f 2|cut -d " " -f 2`
+new_name="$date_and_time"
+
+if test "$new_name" = ""
+then
+	echo Could not determine the original create date/time of "'$media'". > /dev/stderr
+	exit 1
+fi
+
+if test -e "$new_name"".$extension"
+then
+	# Same inode: if it's the same file, don't bother with checksums and whatnot; just exit.
+	if test `stat -c %i "$media"` -eq `stat -c %i "$new_name".$extension`
+	then
+		exit
+	fi
+
+	# Not the same file, calculate MD5 checksums.
+	mdnew=`md5sum $new_name".$extension"|cut -d " " -f 1`
+	mdold=`md5sum $media|cut -d " " -f 1`
+
+	# Same MD5 checksum; overwrite.	
+	if test $mdnew = $mdold 
+	then
+		echo "'$media' and '$new_name.$extension' are identical. Deleting one copy."
+		mv -v "$media" "$new_name".$extension 2> /dev/null # Ignore the "same file" warning.
+	else
+		# Different MD5 checksums; append number.
+		appended_num=1
+
+		while test -e "$new_name""_$appended_num"".$extension"
+		do
+			# The inode test, again.
+			# A function, it should be. *In Yoda's voice*
+			if test `stat -c %i "$media"` -eq `stat -c %i "$new_name"_$appended_num.$extension`
+			then
+				exit
+			fi
+
+			# Duplicate-ish code; should be turned into a function.
+			# Check MD5 checksums, again (sigh).
+			md_with_appended_num=`md5sum $new_name""_$appended_num"".$extension|cut -d " " -f 1`
+		
+			if test $mdold = $md_with_appended_num
+			then
+				# Delete duplicate, by overwriting.
+				mv -vf "$media" "$new_name""_$appended_num"".$extension" 
+				break
+			fi
+			appended_num=$(($appended_num + 1))
+		done
+
+		# No duplicate. Give filename the highest appended number.
+		mv -v "$media" "$new_name"_$appended_num.$extension
+	fi
+else
+	# No other file with this name; just rename.
+	# Yes we've already determined that the filename
+	# does not exist, but it is good practice to add the -n option to prevent overwriting
+	# in case there's some mistake in the code above.
+	mv -nv "$media" "$new_name"".$extension"
+fi
