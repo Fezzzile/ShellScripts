@@ -13,6 +13,9 @@
 #
 #	Create function that checks if MD5 checksums are the same
 #	overwrite if they are and exit.
+# BUGS: Minor: 'mv' may attempt to rename a file which has already been renamed.
+# This does not overwrite/delete any file.
+# I don't have the time to check which line causes this. Sorry.
 
 media=$1
 
