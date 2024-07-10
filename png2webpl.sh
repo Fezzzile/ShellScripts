@@ -8,11 +8,11 @@ webp="$(echo $png|awk '{gsub(".png", ".webp"); print}')"
 
 if [ $argc -lt 1 ]
 then
-	echo "Usage: \n\t$0 [PNG file]"
-	exit 1
+	echo "Usage: \n\t$0 <image.png>"
+	exit
 fi
 
-bitdepth=$(exiftool "$png"|grep -i "Bit Depth"|cut -f 2 -d ":"|cut -d " " -f 2)
+bitdepth=$(exiftool -p '$BitDepth' "$png")
 # WebP does not support colour depths greater than 8.
 if [ $bitdepth -gt 8 ]
 then
@@ -22,15 +22,23 @@ then
 fi
 
 # Use ImageMagick
-convert "$png" -define webp:lossless=true "$webp" && echo -n "Losslessly converted '$png' to '$webp'"
+which convert > /dev/null
+if test $? -ne 0
+then
+	echo "ImageMagick's convert tool not installed." > /dev/stderr
+	# TODO: Use ffmpeg.
+	exit 1
+fi
+
+convert "$png" -define webp:lossless=true "$webp" && echo -n "Lossless: '$png' ($(du -h "$png"|cut -f 1)) → '$webp'"
 # Since I ignore the digits after ".", the result is a floor.
 # bc: Changing the scale, to reduce the number of digits after ".", massively affects the accuracy.
 # I have to read more documentation, but this will do for now.
-echo "($(echo "100 * (1 - $(du -b "$webp"|cut -d "	" -f 1) / $(du -b "$png"|cut -d "	" -f 1))"|bc -l|cut -d "." -f1)% smaller)"
+echo "($(du -h "$webp"|cut -f 1), $(echo "100 * (1 - $(du -b "$webp"|cut -f 1) / $(du -b "$png"|cut -f 1))"|bc -l|cut -d "." -f1)% smaller)"
 
 # Copy modification and access times
 # Known issue: this line does not work if the script is invoked with zsh
-# (despite the shebang).
+# (despite the shebang telling it to use sh, not zsh).
 touch -r "$png" "$webp"
 
 # Follow the psedocode below to check if the generated WebP is truly lossless.
