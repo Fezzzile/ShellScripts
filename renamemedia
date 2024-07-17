@@ -93,3 +93,7 @@ else
 	# in case there's some mistake in the code above.
 	mv -nv "$media" "$new_name"".$extension"
 fi
+
+# The file extension finder method is not 100% reliable.
+# The photo https://commons.wikimedia.org/wiki/File:Sunflower-like_flower_LRM_EXPORT20191019.jpg,
+# whose source is a DNG and was created with RawTherapee, is identified as a DNG.
