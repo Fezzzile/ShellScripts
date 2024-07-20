@@ -1,21 +1,14 @@
-#!/usr/bin/bash
+#! /usr/bin/env sh
 
-year=$1
-month=$2
-day=1
+argc=$#
 
-while (( $day <= 31 ))
-do
-	if (( $day < 10 )); then
-		yyyymmdd="$year""$month""0""$day"
-	else	
-		yyyymmdd="$year""$month""$day"
-	fi
+if [ $argc -lt 1 ]
+then
+	echo "Usage: \n\t$0 <yyyymmdd_------.ext>"
+	exit
+fi
 
-	mkdir "$yyyymmdd"
-	mv -n "$yyyymmdd"* "$yyyymmdd" #And make sure you don't override existing file
-	day=$(($day + 1))
-done
-
-# Delete empty directories
-rmdir */
+media="$1"
+nameprefix=`ls "$media"|cut -d "_" -f 1`
+mkdir "$nameprefix"
+mv -nv "$media" "$nameprefix"/
