@@ -21,7 +21,10 @@ argc=$#
 
 if [ $argc -lt 1 ]
 then
-	echo -e "Usage: \n\t$0 <file>"
+	echo -e "Usage: \n\t$0 <file>" # -e because I am using Bash,
+	# which does not have a built-in echo. Other shells, esp Zsh,
+	# have a built-in echo that automatically interprets backslash
+	# escapes.
 	exit
 fi
 
@@ -105,3 +108,6 @@ fi
 # The file extension finder method is not 100% reliable.
 # The photo https://commons.wikimedia.org/wiki/File:Sunflower-like_flower_LRM_EXPORT20191019.jpg,
 # whose source is a DNG and was created with RawTherapee, is identified as a DNG.
+# This may be affected by the app that created the DNG. From the LRM prefix, it's likely the
+# Android version of Lightroom. If not, likely Open Camera and imported to Lightroom.
+# I took the picture in 2019.
