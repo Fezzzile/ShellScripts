@@ -2,6 +2,18 @@
 
 argc=$#
 
+# This script takes any file with a filename
+# comprising a "yyyymmdd_" prefix, where
+# yyyy, mm, dd represent the year, month, date,
+# respectively.
+# Assuming the prefix conforms to ISO 8601,
+# the file will be moved to directory yyyymmdd/.
+#
+# If there is no underscore in the filename,
+# no directory will be created and the file
+# will remain in its current directory.
+# (File systems do not allow zero-length filenames.)
+
 if [ $argc -lt 1 ]
 then
 	echo "Usage: \n\t$0 <yyyymmdd_------.ext>"
@@ -10,5 +22,5 @@ fi
 
 media="$1"
 nameprefix=`ls "$media"|cut -d "_" -f 1`
-mkdir "$nameprefix"
+mkdir "$nameprefix" 2> /dev/null # Ignore "file exists"
 mv -nv "$media" "$nameprefix"/
