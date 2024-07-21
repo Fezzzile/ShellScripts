@@ -37,7 +37,7 @@ convert "$png" -define webp:lossless=true "$webp" && echo -n "Lossless: '$png' (
 echo "($(du -h "$webp"|cut -f 1), $(echo "100 * (1 - $(du -b "$webp"|cut -f 1) / $(du -b "$png"|cut -f 1))"|bc -l|cut -d "." -f1)% smaller)"
 
 # Copy modification and access times
-# Known issue: this line does not work if the script is invoked with zsh
+# Known issue: this line may not work if the script is invoked with zsh
 # (despite the shebang telling it to use sh, not zsh).
 touch -r "$png" "$webp"
 
