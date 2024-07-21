@@ -21,6 +21,18 @@ then
 fi
 
 media="$1"
+if test -d "$media"
+then
+	echo "'$media' is a directory. Skipping..." > /dev/stderr
+	exit 1
+fi
+
 nameprefix=`ls "$media"|cut -d "_" -f 1`
-mkdir "$nameprefix" 2> /dev/null # Ignore "file exists"
-mv -nv "$media" "$nameprefix"/
+
+if test -d "$nameprefix"
+then
+	mv -nv "$media" "$nameprefix"/
+else
+	mkdir "$nameprefix" && \
+	mv -nv "$media" "$nameprefix"/
+fi
