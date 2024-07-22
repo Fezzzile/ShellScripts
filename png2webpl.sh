@@ -30,11 +30,11 @@ then
 	exit 1
 fi
 
-convert "$png" -define webp:lossless=true "$webp" && echo -n "Lossless: '$png' ($(du -h "$png"|cut -f 1)) → '$webp'"
+convert "$png" -define webp:lossless=true "$webp" && echo -n "'$png' ($(du -h "$png"|cut -f 1)) → '$webp'"
 # Since I ignore the digits after ".", the result is a floor.
 # bc: Changing the scale, to reduce the number of digits after ".", massively affects the accuracy.
 # I have to read more documentation, but this will do for now.
-echo "($(du -h "$webp"|cut -f 1), $(echo "100 * (1 - $(du -b "$webp"|cut -f 1) / $(du -b "$png"|cut -f 1))"|bc -l|cut -d "." -f1)% smaller)"
+echo " [lossless, $(du -h "$webp"|cut -f 1) (−$(echo "100 * (1 - $(du -b "$webp"|cut -f 1) / $(du -b "$png"|cut -f 1))"|bc -l|cut -d "." -f1)%)]"
 
 # Copy modification and access times
 # Known issue: this line may not work if the script is invoked with zsh
