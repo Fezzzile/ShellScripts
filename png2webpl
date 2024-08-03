@@ -31,9 +31,6 @@ then
 fi
 
 convert "$png" -define webp:lossless=true "$webp" && echo -n "'$png' ($(du -h "$png"|cut -f 1)) → '$webp'"
-# Since I ignore the digits after ".", the result is a floor.
-# bc: Changing the scale, to reduce the number of digits after ".", massively affects the accuracy.
-# I have to read more documentation, but this will do for now.
 
 # Let's try to preserve tags.
 # Some screenshot tools embed the original date/time and the name of the tool.
@@ -45,6 +42,10 @@ convert "$png" -define webp:lossless=true "$webp" && echo -n "'$png' ($(du -h "$
 # whereas ImageMagick uses the typical WebP container (VP8L).
 exiftool  -tagsFromFile "$png" "$webp" > /dev/null && rm "$webp"_original
 
+# Calculate reduction percentage with bc.
+# Since I ignore the digits after ".", the result is a floor.
+# Changing the scale, to reduce the number of digits after ".", massively affects the accuracy.
+# I have to read more documentation, but this will do for now.
 echo " [lossless, $(du -h "$webp"|cut -f 1) (−$(echo "100 * (1 - $(du -b "$webp"|cut -f 1) / $(du -b "$png"|cut -f 1))"|bc -l|cut -d "." -f1)%)]"
 
 # Copy modification and access times
