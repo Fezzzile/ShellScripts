@@ -34,6 +34,17 @@ convert "$png" -define webp:lossless=true "$webp" && echo -n "'$png' ($(du -h "$
 # Since I ignore the digits after ".", the result is a floor.
 # bc: Changing the scale, to reduce the number of digits after ".", massively affects the accuracy.
 # I have to read more documentation, but this will do for now.
+
+# Let's try to preserve tags.
+# Some screenshot tools embed the original date/time and the name of the tool.
+# Viewing the tags of some of the WebP files with ExifTool
+# will reveal some YCbCr (chroma subsampling) tags.
+# I assure you that despite this, the data is still RGB(A) and lossless.
+# (RGB-YCbCr conversion is typically lossy.)
+# ExifTool writes Extended-WebP (VP8X) files,
+# whereas ImageMagick uses the typical WebP container (VP8L).
+exiftool  -tagsFromFile "$png" "$webp" > /dev/null && rm "$webp"_original
+
 echo " [lossless, $(du -h "$webp"|cut -f 1) (−$(echo "100 * (1 - $(du -b "$webp"|cut -f 1) / $(du -b "$png"|cut -f 1))"|bc -l|cut -d "." -f1)%)]"
 
 # Copy modification and access times
