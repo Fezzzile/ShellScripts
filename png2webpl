@@ -36,11 +36,14 @@ convert "$png" -define webp:lossless=true "$webp" && echo -n "'$png' ($(du -h "$
 # Some screenshot tools embed the original date/time and the name of the tool.
 # Viewing the tags of some of the WebP files with ExifTool
 # will reveal some YCbCr (chroma subsampling) tags.
-# I assure you that despite this, the data is still RGB(A) and lossless.
-# (RGB-YCbCr conversion is typically lossy.)
+# I assure you that, despite this, the data is still RGB(A) and lossless.
+# (RGB-YCbCr conversion is typically lossy, depending on precision.)
 # ExifTool writes Extended-WebP (VP8X) files,
 # whereas ImageMagick uses the typical WebP container (VP8L; L for lossless).
 # (Hexdump the first sixteen bytes to see this; it's bytes 13–16.)
+#
+# TODO: check first if there are tags in the pic, to avoid adding ExifTool-specific
+# tags that did not exist in the original pic.
 exiftool  -tagsFromFile "$png" "$webp" > /dev/null && rm "$webp"_original
 
 # Calculate reduction percentage with bc.
