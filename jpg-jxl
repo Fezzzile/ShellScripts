@@ -1,8 +1,35 @@
 #! /usr/bin/sh
 
 # Losslessly compress JPEG pictures.
+
+jpg="$1" # Only one input supported for now. TODO: Add *jpg expansion support.
+argc=$#
+
+# Change extension from .jpg to .jxl
+jxl="$(echo $jpg|awk '{gsub(".jpg", ".jxl"); print}')"
+
+if [ $argc -lt 1 ]
+then
+	echo "Usage: \n\t$0 [JPEG file]"
+	exit 1
+fi
+
+cjxl --quiet --lossless_jpeg=1 --jpeg_store_metadata=1 "$jpg" "$jxl" && echo -n " '$jpg' ($(du -h "$jpg"|cut -f 1)) → '$jxl'"
+# Since I ignore the digits after ".", the result is a floor.
+# bc: Changing the scale, to reduce the number of digits after ".", massively affects the accuracy.
+# I have to read more documentation, but this will do for now.
+echo " [lossless, $(du -h "$jxl"|cut -f 1) (−$(echo "100 * (1 - $(du -b "$jxl"|cut -f 1) / $(du -b "$jpg"|cut -f 1))"|bc -l|cut -d "." -f1)%)]"
+
+# Copy access and modification times from the JPEG
+touch -r "$jpg" "$jxl"
+
+## How to reconstruct JPEG
+# djxl image.jxl image.jpg
 #
-# Note: If `--losless_jpeg=1` is passed to cjxl
+# The checksum (eg md5sum) of the new JPEG should be the same as the original JPEG file.
+
+## Known issues/bugs:
+# Even if `--losless_jpeg=1` is passed to cjxl
 # but the input file is not a JPEG, possibly a PNG mislabeled as a JPEG in the extension (the Twitter/X Android app does this),
 # the file will be encoded nonetheless,
 # and a warning will be sent to stderr.
@@ -18,25 +45,9 @@
 # confirming that the file was not converted losslessly.
 #
 # A possible solution is to confirm that the input file is indeed a JPEG
-# with ExifTool/file before compressing (this scripture does not do that, yet).
+# with ExifTool/file before compressing (this script does not do that, yet).
 #
 # Perhaps I should write my own encoder and use libjxl directly!
 
-jpg="$1"
-argc=$#
-jxl="$(echo $jpg|awk '{gsub(".jpg", ".jxl"); print}')"
-
-if [ $argc -lt 1 ]
-then
-	echo "Usage: \n\t$0 [JPEG file]"
-	exit 1
-fi
-
-cjxl --quiet --lossless_jpeg=1 "$jpg" "$jxl" && echo -n "Losslessly compressed '$jpg' to '$jxl'"
-# Since I ignore the digits after ".", the result is a floor.
-# bc: Changing the scale, to reduce the number of digits after ".", massively affects the accuracy.
-# I have to read more documentation, but this will do for now.
-echo "($(echo "100 * (1 - $(du -b "$jxl"|cut -d "	" -f 1) / $(du -b "$jpg"|cut -d "	" -f 1))"|bc -l|cut -d "." -f1)% smaller)"
-
-# Copy access and modification times from the JPEG
-touch -r "$jpg" "$jxl"
+# TODO:
+# Compress any JPEG file regardless of extension; for now only .jpg works.
