@@ -29,7 +29,7 @@ touch -r "$jpg" "$jxl"
 # The checksum (eg md5sum) of the new JPEG should be the same as the original JPEG file.
 
 ## Known issues/bugs:
-# Even if `--losless_jpeg=1` is passed to cjxl
+# Even if `--lossless_jpeg=1` is passed to cjxl
 # but the input file is not a JPEG, possibly a PNG mislabeled as a JPEG in the extension (the Twitter/X Android app does this),
 # the file will be encoded nonetheless,
 # and a warning will be sent to stderr.
