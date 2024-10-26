@@ -38,3 +38,7 @@ do
 			mv -nv "$song" "$newfilename"
 	fi
 done
+
+# Bugs:
+# If the TRACKTOTAL/TOTALTRACKS tag appears more than once, 
+# the files will be renamed without prepending a zero (if TRACKTOTAL > 9).
