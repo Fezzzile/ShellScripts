@@ -1,0 +1,35 @@
+#! /usr/bin/zsh
+
+# Given a song, check if language language exists in tags.
+audio=$1
+language=$2
+
+metaflac --export-tags-to - $audio|grep -i "language=$language" > /dev/null
+# In case metaflac does not exist,
+# "metaflac --export-tags-to -" can be replaced with "soxi", a SoX command, which is ~100% slower. 
+#soxi $song|grep -i "language=$language" > /dev/null 
+
+# Print full path of audio if language is found in tags.
+if [ $? -eq 0 ]
+then
+	realpath $audio
+fi
+
+# My music collection comprises artists from many various countries,
+# many of whom sing in their native tongues.
+# I sometimes forget the name of a song/artist,
+# but if I remember the language of the lyrics,
+# with this script, I can cut the number of songs to go through before I find the desired song.
+# I tag all songs with language tags manually.
+# To be consistent, I use the ISO-639-3 language codes in all tags.
+#
+# For example, the command
+# 	find ~/Music/ -type f -iname "*.flac" -exec audiolang {} ssw \;
+# looks for FLAC files in the ~/Music/ directory and prints those with Swazi vocals.
+#
+# It's even better with a CoW filesystem (Btrfs). Instead of simply printing a song's full path,
+# I can "copy" (cp --reflink=always) all the songs to a certain directory
+# and perform another search.
+# For example, I also tag each song with the artist's sex.
+# This way, I can probably cut the list in half (think of a binary search tree).
+# I can go from thousands to a just a few dozen songs. Pretty cool.
