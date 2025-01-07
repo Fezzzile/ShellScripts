@@ -14,7 +14,7 @@ then
 	exit 1
 fi
 
-cjxl --quiet --lossless_jpeg=1 --jpeg_store_metadata=1 --effort 8 "$jpg" "$jxl" && echo -n " '$jpg' ($(du -h "$jpg"|cut -f 1)) → '$jxl'"
+cjxl --quiet --lossless_jpeg=1 --effort 8 "$jpg" "$jxl" && echo -n " '$jpg' ($(du -h "$jpg"|cut -f 1)) → '$jxl'"
 # Since I ignore the digits after ".", the result is a floor.
 # bc: Changing the scale, to reduce the number of digits after ".", massively affects the accuracy.
 # I have to read more documentation, but this will do for now.
