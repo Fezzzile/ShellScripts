@@ -40,7 +40,7 @@ fi
 
 # "Create Date" should cover most files. 
 # Some systems, however, only store the "Date/Time Original" field.
-date_and_time=$(exiftool -d "%Y%m%d_%H%M%S" "$media"|egrep -i "Create Date|Date/Time Original"|head -n1|cut -d ":" -f2|cut -d " " -f2)
+date_and_time=$(exiftool -d "%Y%m%d_%H%M%S" "$media"|grep -Ei "Create Date|Date/Time Original"|head -n1|cut -d ":" -f2|cut -d " " -f2)
 
 extension=`exiftool "$media"|grep -i "File Type Extension"|cut -d ":" -f 2|cut -d " " -f 2`
 new_name="$date_and_time"
