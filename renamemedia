@@ -12,10 +12,20 @@
 #	also have the same inode.
 #
 #	Create function that checks if MD5 checksums are the same
-#	overwrite if they are and exit.
+#	overwrite if they are and exit. (I think I've already done this.)
+#
 # BUGS: Minor: 'mv' may attempt to rename a file which has already been renamed.
-# This does not overwrite/delete any file.
-# I don't have the time to check which line causes this. Sorry.
+# 
+# 	This does not overwrite/delete any file.
+# 	I don't have the time to check which line causes this. Sorry.
+#
+# 	The script works well for almost any .mov container (mostly from iOS).
+# 	However, if there is a slow motion video in the container, the script gets the creation date_and_time
+# 	from the file system (ext4, Btrfs, etc), instead of from the file itself.
+# 	(I found this bug from videos I shot with an iPhone 6s Plus.)
+#
+# 	The scripts almost always uses the UTC+00 time when renaming videos, regardless of container, 
+# 	but for photos it always uses the timezone set in the recorder.
 
 argc=$#
 
