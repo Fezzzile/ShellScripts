@@ -39,6 +39,8 @@ fi
 for filename in "${FilesWithSound[@]}"
 do
 	echo "$numberOfCheckedFiles/$numberOfFilesToBeChecked. spek '$filename'"
+	ffprobe -hide_banner "$filename" 
+	echo ""
 	spek ./"$filename" 2> /dev/null # OPTIONAL AND NOT RECOMMENDED: Append an ampersand (&) hereto to perform all checks concurrently 
 	numberOfCheckedFiles=$((numberOfCheckedFiles + 1))
 done
