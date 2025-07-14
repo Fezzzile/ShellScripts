@@ -40,6 +40,12 @@ fi
 
 media=$1
 
+if test -d "$media"
+then
+	echo ""$media" is a directory." > /dev/stderr
+	exit 1
+fi
+
 # Dependencies: ExifTool.
 which exiftool &> /dev/null
 if test $? -ne 0
