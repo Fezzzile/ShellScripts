@@ -24,7 +24,7 @@
 # 	from the file system (ext4, Btrfs, etc), instead of from the file itself.
 # 	(I found this bug from videos I shot with an iPhone 6s Plus.)
 #
-# 	The scripts almost always uses the UTC+00 time when renaming videos, regardless of container, 
+# 	The script almost always uses the UTC+00 time when renaming videos, regardless of container, 
 # 	but for photos it always uses the timezone set in the recorder.
 
 argc=$#
